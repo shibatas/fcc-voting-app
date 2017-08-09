@@ -1,0 +1,4 @@
+Routing
+
+https://webapplog.com/url-parameters-and-routing-in-express-js/
+http://jilles.me/express-routing-the-beginners-guide/

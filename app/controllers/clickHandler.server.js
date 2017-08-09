@@ -15,19 +15,24 @@ function ClickHandler () {
 	};
 
 	this.addClick = function (req, res) {
+		let btn = 'nbrClicks.' + req.query.btn;
+		let obj = {};
+		obj[btn] = 1;
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, { $inc: { 'nbrClicks.clicks': 1 } })
+			.findOneAndUpdate({ 'github.id': req.user.github.id }, { $inc: obj })
 			.exec(function (err, result) {
 					if (err) { throw err; }
-
 					res.json(result.nbrClicks);
 				}
 			);
 	};
 
 	this.resetClicks = function (req, res) {
+		let obj = {};
+		obj['nbrClicks.btn1'] = 0;
+		obj['nbrClicks.btn2'] = 0;
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, { 'nbrClicks.clicks': 0 })
+			.findOneAndUpdate({ 'github.id': req.user.github.id }, obj)
 			.exec(function (err, result) {
 					if (err) { throw err; }
 

@@ -115,12 +115,12 @@ img {
 /****** Click Styling ******/
 
 .btn-container {	/* Styling for the div that contains the buttons */
-	margin: -10px auto 0 auto;
+	margin: 0 auto 0 auto;
 	text-align: center;
 }
 
 .btn {	/* Styling for buttons */
-	margin: 0 8px;
+	margin: 20px 8px;
 	color: white;
 	background-color: #00BCD4;
 	display: inline-block;

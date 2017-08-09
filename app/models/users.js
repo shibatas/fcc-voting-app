@@ -11,7 +11,8 @@ var User = new Schema({
       publicRepos: Number
 	},
    nbrClicks: {
-      clicks: Number
+      btn1: Number,
+      btn2: Number
    }
 });
 
