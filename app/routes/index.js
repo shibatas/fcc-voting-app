@@ -2,6 +2,7 @@
 
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+var Poll = require(path + '/app/controllers/poll.server.js');
 
 module.exports = function (app, passport) {
 
@@ -14,9 +15,10 @@ module.exports = function (app, passport) {
 	}
 
 	var clickHandler = new ClickHandler();
+	var poll = new Poll();
 
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
+		.get(/*isLoggedIn, */function (req, res) {
 			res.sendFile(path + '/public/index.html');
 		});
 
@@ -54,4 +56,25 @@ module.exports = function (app, passport) {
 		.get(isLoggedIn, clickHandler.getClicks)
 		.post(isLoggedIn, clickHandler.addClick)
 		.delete(isLoggedIn, clickHandler.resetClicks);
+		
+	app.route('/poll*')
+		.get(/*isLoggedIn, */function (req, res) {
+			res.sendFile(path + '/public/poll.html');
+		});
+		
+	app.route('/poll/vote/:id')
+		.get(poll.getClicks)
+		.post(poll.addClick)
+		.delete(poll.resetClicks);
+		
+	app.route('/form*')
+		.get(/*isLoggedIn,*/ function (req, res) {
+			res.sendFile(path + '/public/form.html')})
+		.post(/*isLoggedIn,*/ poll.newQuestion);
+		
+	app.route('/renderQuestions')
+		.get(poll.getQuestions);
+
+	app.route('/renderPoll/:id')
+		.get(poll.getPoll);
 };

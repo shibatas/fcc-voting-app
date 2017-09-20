@@ -1,12 +1,13 @@
 'use strict';
 
 var Users = require('../models/users.js');
+var Questions = require('../models/questions.js');
 
 function ClickHandler () {
 
 	this.getClicks = function (req, res) {
 		Users
-			.findOne({ 'github.id': req.user.github.id }, { '_id': false })
+			.findOne({ 'github.id': "26139392" }, { '_id': false })
 			.exec(function (err, result) {
 				if (err) { throw err; }
 
@@ -19,7 +20,7 @@ function ClickHandler () {
 		let obj = {};
 		obj[btn] = 1;
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, { $inc: obj })
+			.findOneAndUpdate({ 'github.id': "26139392" }, { $inc: obj })
 			.exec(function (err, result) {
 					if (err) { throw err; }
 					res.json(result.nbrClicks);
@@ -32,7 +33,7 @@ function ClickHandler () {
 		obj['nbrClicks.btn1'] = 0;
 		obj['nbrClicks.btn2'] = 0;
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, obj)
+			.findOneAndUpdate({ 'github.id': "26139392" }, obj)
 			.exec(function (err, result) {
 					if (err) { throw err; }
 

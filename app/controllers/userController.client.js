@@ -13,6 +13,7 @@
    }
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, function (data) {
+      
       var userObject = JSON.parse(data);
 
       if (userObject.displayName !== null) {

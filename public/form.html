@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Voting App! by Shohei Shibata</title>
+		
+		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
+		<script src="https://unpkg.com/react@15.6.1/dist/react.js"></script>
+		<script src="https://unpkg.com/react-dom@15.6.1/dist/react-dom.js"></script>
+		<script type="text/javascript" src="common/ajax-functions.js"></script>
+		<script type="text/javascript" src="controllers/form.client.js"></script>
+	</head>
+
+	<header>
+		<p>Welcome, <span id="display-name">Guest</span>!</p>
+		<a class="menu" href="/profile">Profile</a>
+		<p>|</p>
+		<a class="menu" href="/logout">Logout</a>
+
+	</header>
+
+	<body>
+
+		
+		<div class="container">
+			<p class="clementine-text">FCC Voting App!</p>
+		</div>
+	
+		<div class="container">
+			
+			<form method="post" id="form">
+				<p>Type the question and the choices below</p>
+				<br/>
+				<p>Question:&nbsp&nbsp<textarea name="question" id="question" rows="3" cols="25" style="vertical-align: top"></textarea></p>
+				<br/>
+				<p>Choice 1:&nbsp&nbsp<input name="choice1" id="choice1"></input></p>
+				<p>Choice 2:&nbsp&nbsp<input name="choice2" id="choice2"></input></p>
+				<p>Choice 3:&nbsp&nbsp<input name="choice3" id="choice3"></input></p>
+				<p>Choice 4:&nbsp&nbsp<input name="choice4" id="choice4"></input></p>
+				<p>Choice 5:&nbsp&nbsp<input name="choice5" id="choice5"></input></p>
+			</form>
+				<p><button class="btn" onClick="submitForm()">Submit</button>
+			
+		</div>
+		
+
+	</body>
+
+</html>
