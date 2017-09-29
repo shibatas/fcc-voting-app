@@ -2,7 +2,6 @@
 
 var Users = require('../models/users.js');
 var Questions = require('../models/questions.js');
-var mongoose = require('mongoose');
 
 function poll () {
 
@@ -27,18 +26,26 @@ function poll () {
 
 	this.resetClicks = function (req, res) {
 		var id = req.params['id'];
-		console.log('delete ' + id);
+		
+		var query = {_id: id, 'choices.count': {$gt: 0}};
+		var newData = {'choices.$.count': 0};
 		
 		Questions
-			.findOneAndUpdate({_id: id },
-				{ $set: {'choices.$[].count': 0}})
-			.exec(function (err, data) {
-				if (err) {throw err;}
-				console.log(data);
-				res.json(data);
+			.find({_id: id},
+			function (err, data) {
+				if (err) {throw err}
+				var num = data[0].choices.length;
+				
+				for (var i = 0; i < num; i++) {
+					Questions.update(query, newData, 
+					function(err, data) {
+						if (err) {throw err;}
+					});
+				}
+				
+				res.send('reset');
 			});
-			
-		//res.end();
+		console.log(id + ' has been reset');
 	};
 
 	this.newQuestion = function (req, res) {

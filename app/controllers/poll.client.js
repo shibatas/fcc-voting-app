@@ -143,14 +143,14 @@
             React.createElement('div', {className: 'btn-container'},
                React.createElement('button', {
                   className: 'btn btn-show',
-                  onClick: function(){renderResult(data.choices)}
+                  onClick: function(){updateClickCount()}
                }, 'Show Results'),
                React.createElement('button', {
                   className: 'btn btn-hide',
                   onClick: function(){hideResult()}
-               }, 'Hide Results')),
+               }, 'Hide Results'),
+               React.createElement(resetClass)),
             React.createElement('div', {className: 'btn-container'},
-               React.createElement(resetClass),
                React.createElement('a', {
                   href: appUrl + '/delete/' + id,
                   className: 'btn'
