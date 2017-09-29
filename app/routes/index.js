@@ -62,9 +62,8 @@ module.exports = function (app, passport) {
 			res.sendFile(path + '/public/poll.html');
 		});
 		
-	app.route('/poll/vote/:id')
-		.get(poll.getClicks)
-		.post(poll.addClick)
+	app.route('/vote/:id/:choice')
+		.get(poll.addClick)
 		.delete(poll.resetClicks);
 		
 	app.route('/form*')
@@ -77,4 +76,7 @@ module.exports = function (app, passport) {
 
 	app.route('/renderPoll/:id')
 		.get(poll.getPoll);
+		
+	app.route('/delete/:id')
+		.get(poll.deletePoll);
 };

@@ -8,42 +8,34 @@
    var retrieveUrl = appUrl + '/renderQuestions';
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', retrieveUrl, function (result) {
-      var data = JSON.parse(result);
-      var questions = [];
-      var URL = [];
-      
-      for (var i=0; i<data.length; i++) {
-         URL.push(pollUrl + data[i]._id); 
-         questions.push(data[i].question); 
-      }
-      
-      
-      
-      renderPolls(questions, URL);
+      renderPolls(JSON.parse(result));
    }));
    
-   function renderPolls(questions, URL) {
-      var children = [];
+   
+   function renderPolls(data) {
+      var questionLink = React.createClass({
+         propTypes: {
+            question: React.PropTypes.string.isRequired,
+            _id: React.PropTypes.string.isRequired,
+         },
+         
+         render: function() {
+            return (
+               React.createElement('a', {
+                  key: this.props._id,
+                  href: pollUrl + this.props._id,
+                  className: 'btn'
+                  }, this.props.question)
+            );
+         }
+      });
       
-      console.log(URL);
-      
-      for (var i=0; i<questions.length; i++) {
-         children.push(
-            React.createElement('button', {
-                  type: 'submit',
-                  className: 'btn',
-                  key: URL[i],
-                  onClick: function() {
-                     window.location = URL[i];
-                  },
-               }, questions[i]));
-      } 
-      
+      var questions = data.map(function(data) { return React.createElement(questionLink, data) })
+
       ReactDOM.render(
          React.createElement('div', {},
             React.createElement('p', {}, 'Which question do you want to answer?'),
-            React.createElement('div',{className: 'btn-container'},
-               children),
+            React.createElement('div', {}, questions),
             React.createElement('button', {
                   type: 'submit',
                   className: 'btn',

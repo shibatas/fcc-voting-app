@@ -2,44 +2,43 @@
 
 var Users = require('../models/users.js');
 var Questions = require('../models/questions.js');
+var mongoose = require('mongoose');
 
 function poll () {
-	
-	this.getClicks = function (req, res) {
-		Users
-			.findOne({ 'github.id': 26139392 }, { '_id': false })
-			.exec(function (err, result) {
-				if (err) { throw err; }
 
-				res.json(result.nbrClicks);
+	this.addClick = function (req, res) {
+		var id = req.params['id'];
+		var choiceNum = req.params['choice'];
+		console.log(id);
+		console.log(choiceNum);
+		
+		Questions
+			.findOneAndUpdate({
+				_id: id, 
+				'choices.id': choiceNum},
+				{
+					$inc: {'choices.$.count': 1}
+				})
+			.exec(function (err, data) {
+				if (err) {throw err;}
+				res.json(data);
 			});
 	};
 
-	this.addClick = function (req, res) {
-		let btn = 'nbrClicks.' + req.query.btn;
-		let obj = {};
-		obj[btn] = 1;
-		Users
-			.findOneAndUpdate({ 'github.id': 26139392 }, { $inc: obj })
-			.exec(function (err, result) {
-					if (err) { throw err; }
-					res.json(result.nbrClicks);
-				}
-			);
-	};
-
 	this.resetClicks = function (req, res) {
-		let obj = {};
-		obj['nbrClicks.btn1'] = 0;
-		obj['nbrClicks.btn2'] = 0;
-		Users
-			.findOneAndUpdate({ 'github.id': 26139392 }, obj)
-			.exec(function (err, result) {
-					if (err) { throw err; }
-
-					res.json(result.nbrClicks);
-				}
-			);
+		var id = req.params['id'];
+		console.log('delete ' + id);
+		
+		Questions
+			.findOneAndUpdate({_id: id },
+				{ $set: {'choices.$[].count': 0}})
+			.exec(function (err, data) {
+				if (err) {throw err;}
+				console.log(data);
+				res.json(data);
+			});
+			
+		//res.end();
 	};
 
 	this.newQuestion = function (req, res) {
@@ -69,13 +68,25 @@ function poll () {
 	
 	this.getPoll = function (req, res) {
 		var id = req.params['id'];
-		console.log(id);
+		
 		Questions
 			.find({_id: id})
 			.exec(function (err, data) {
 				if (err) { throw err; }
 				res.json(data[0]);
 			});
+	};
+	
+	this.deletePoll = function (req, res) {
+		var id = req.params['id'];
+	
+		Questions.findOneAndRemove({_id: id}, function (err) {
+			if (err) {throw err; }
+			else {console.log(id + " has been deleted"); }
+		});
+		
+		
+		res.redirect('https://fcc-dynamic-web-app-shohei51.c9users.io/');
 	};
 }
 

@@ -3,16 +3,16 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var Choices = new Schema({
+	"id": Number, 
+	"choice": String, 
+	"count": 0
+});
+
 var Question = new Schema({
 	id: Number,
 	question: String,
-	choices: {
-	    '1': [String, Number],
-	    '2': [String, Number],
-	    '3': [String, Number],
-	    '4': [String, Number],
-	    '5': [String, Number]
-	}
+	choices: [Choices]
 });
 
 module.exports = mongoose.model('Question', Question);
