@@ -1,7 +1,8 @@
 'use strict';
    
 (function () {
-   /*global ajaxFunctions appUrl React ReactDOM*/
+   /*global ajaxFunctions appUrl React ReactDOM d3*/
+
    var apiUrl = appUrl + '/poll/:id';
    var id = window.location.search.substr(1);
    console.log(id);
@@ -78,6 +79,8 @@
    
    function renderResult (data) {
       
+/*      console.log(data);
+      
       var item = React.createClass({
          propTypes: {
             id: React.PropTypes.number.isRequired,
@@ -96,11 +99,16 @@
       });
    
       var graph = data.map(function(data) { return React.createElement(item, data) });
+*/      
+      chart(data);
       
-      ReactDOM.render(
+/*      ReactDOM.render(
          React.createElement('div', {}, graph),
          document.getElementById('results'));
+*/
       renderResult.state = true;
+      
+      
    }
    
    function hideResult() {
@@ -164,28 +172,55 @@
             ),
          document.getElementById('actions'));
    }
-
-/*
-   btn1.addEventListener('click', function () {
-      let btn = '?btn=btn1';
-      ajaxFunctions.ajaxRequest('POST', apiUrl+btn, function () {
-         ajaxFunctions.ajaxRequest('GET', apiUrl, updateClickCount);
-      });
-
-   }, false);
    
-   btn2.addEventListener('click', function () {
-      let btn = '?btn=btn2';
-      ajaxFunctions.ajaxRequest('POST', apiUrl+btn, function () {
-         ajaxFunctions.ajaxRequest('GET', apiUrl, updateClickCount);
-      });
-   }, false);
+   function chart(chartData) {
+      console.log('graph function');
+      console.log(chartData);
 
-   deleteButton.addEventListener('click', function () {
-      ajaxFunctions.ajaxRequest('DELETE', apiUrl, function () {
-         ajaxFunctions.ajaxRequest('GET', apiUrl, updateClickCount);
-      });
+     var targetID = '#results';
+     
+     d3.select(targetID).selectAll('svg').remove();
+     d3.select(targetID).selectAll('p').remove();
 
-   }, false);
-*/
+     var w = 360,
+       h = 360,
+       r = 180;
+
+     var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+     var svg = d3.select(targetID)
+       .append('svg')
+       .attr('width', w)
+       .attr('height', h)
+       .append('g')
+       .attr('transform', 'translate(' + (w/2) + ',' + (h/2) + ')');
+   
+     var arc = d3.arc()
+       .innerRadius(0)
+       .outerRadius(r);
+   
+     var pie = d3.pie()
+       .value(function(d) {return d.count})
+       .sort(null);
+   
+     var path = svg.selectAll('path')
+       .data(pie(chartData))
+       .enter();
+   
+     path.append('path')
+         .attr('d', arc)
+         .attr('fill', function (d, i) {
+           return color(d.data.choice); });
+   
+     path.append('text')
+       .attr('transform', function(d) {
+         d.innerRadius = 0;
+         d.outerRadius = r;
+         return "translate(" + arc.centroid(d) + ")";
+       })
+       .attr('text-anchor', 'middle')
+       .text(function (d) {return d.data.count;});
+}
+
+
 })();
