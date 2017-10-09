@@ -34,7 +34,7 @@
    }
 
    function renderChoices (data) {
-
+     console.log(data);
       var choices = data.choices;
 
       var item = React.createClass({
