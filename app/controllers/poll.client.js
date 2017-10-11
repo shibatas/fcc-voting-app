@@ -34,7 +34,7 @@
    }
 
    function renderChoices (data) {
-     console.log(data);
+
       var choices = data.choices;
 
       var item = React.createClass({
@@ -47,8 +47,9 @@
 
          submitVote: function() {
             console.log(this.props.id);
-            ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', voteUrl+"/"+this.props.id, function(result) {
-               console.log(JSON.stringify(result));
+            ajaxFunctions.ready(ajaxFunctions.ajaxRequest(
+              'GET', voteUrl+"/"+this.props.id, function(result) {
+                console.log(JSON.stringify(result));
                   updateClickCount();
             }));
 
@@ -136,10 +137,6 @@
                   className: 'btn btn-show',
                   onClick: function(){updateClickCount()}
                }, 'Show Results'),
-               /*React.createElement('button', {
-                  className: 'btn btn-hide',
-                  onClick: function(){hideResult()}
-               }, 'Hide Results'),*/
                React.createElement(resetClass)),
             React.createElement('div', {className: 'btn-container'},
                React.createElement('a', {
