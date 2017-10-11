@@ -17,6 +17,7 @@ mongoose.Promise = global.Promise;
 app.use('/controllers', express.static(process.cwd() + '/app/controllers'));
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use('/common', express.static(process.cwd() + '/app/common'));
+app.use('/lib', express.static(process.cwd() + '/lib'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -32,7 +33,7 @@ app.use(passport.session());
 
 routes(app, passport);
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 app.listen(port,  function () {
 	console.log('Node.js listening on port ' + port + '...');
 });

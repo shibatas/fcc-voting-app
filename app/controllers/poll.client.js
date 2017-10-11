@@ -8,7 +8,6 @@
    console.log(id);
    var dataUrl = appUrl + '/renderPoll/' + id;
    var voteUrl = appUrl + '/vote/' + id;
-   //var resetUrl = appUrl +
    var output = {};
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
@@ -79,19 +78,32 @@
    }
 
    function renderResult (data) {
-      chart(data);
-      renderResult.state = true;
+     var sum = 0;
+     for (var prop in data) {
+       sum += data[prop].count;
+     };
+
+     if (sum > 0) {
+       chart(data);
+       renderResult.state = true;
+     } else {
+       ReactDOM.render(
+         React.createElement('p',{},
+           'No data... please vote first!'),
+         document.getElementById('results')
+       );
+     }
    }
 
    function hideResult() {
-      ReactDOM.unmountComponentAtNode(
-         document.getElementById('results')
-      );
-      ReactDOM.render(
-         React.createElement(
-            'p',{}),
-         document.getElementById('results'));
-      renderResult.state = false;
+     console.log('hide result');
+     ReactDOM.unmountComponentAtNode(
+       document.getElementById('results')
+     );
+     ReactDOM.render(
+       React.createElement('p',{}),
+       document.getElementById('results'));
+     renderResult.state = false;
    }
 
    function renderActions (data) {
@@ -129,7 +141,7 @@
             React.createElement('div', {className: 'btn-container'},
                React.createElement('a', {
                   href: appUrl + '/delete/' + id,
-                  className: 'btn'
+                  className: 'btn btn-delete'
                }, 'Delete this poll')),
             React.createElement('div', {className: 'btn-container'},
                React.createElement('button', {
@@ -189,7 +201,8 @@
        .attr('text-anchor', 'middle')
        .text(function (d) {
          var text = d.data.choice + ': ' + d.data.count;
-         return text;});
+         return text;
+       });
 }
 
 

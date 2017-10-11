@@ -4,32 +4,34 @@
 
 	<head>
 		<title>Voting App! by Shohei Shibata</title>
-		
+
 		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
 	</head>
 
 	<header>
 		<p>Welcome, <span id="display-name">Guest</span>!</p>
-		<a class="menu" href="/profile">Profile</a>
+		<a class="menu" href="/login">Login</a>
+	
+		<!--<a class="menu" href="/profile">Profile</a>
 		<p>|</p>
-		<a class="menu" href="/logout">Logout</a>
+		<a class="menu" href="/logout">Logout</a>-->
 	</header>
 
 	<body>
 		<div class="container">
 			<p class="clementine-text">FCC Voting App!</p>
 		</div>
-	
+
 		<div class="btn-container" id="questions"></div>
-	
+
 		<div class="container" id="vote"></div>
-		
+
 		<script src="https://unpkg.com/react@15.6.1/dist/react.js"></script>
 		<script src="https://unpkg.com/react-dom@15.6.1/dist/react-dom.js"></script>
 		<script type="text/javascript" src="common/ajax-functions.js"></script>
 		<script type="text/javascript" src="controllers/index.client.js"></script>
 		<!--<script type="text/javascript" src="controllers/userController.client.js"></script>-->
-		
+
 	</body>
 
 </html>
