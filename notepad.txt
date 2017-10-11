@@ -1,14 +1,8 @@
 ***TO DO
-    NEXT FOCUS:  Click to update mongoDB data
-    (then, create new poll)
-    
-    1. Update mongoDB with click
-    2. Create new question
-    3. Delete poll
-    4. Share poll via twitter or facebook (this means each poll needs a unique URL)
-    5. Show a chart (Chart.js or Google Charts)
-    6. Add choices to a poll
-    
+    - Share poll via twitter or facebook (this means each poll needs a unique URL)
+    - Add choices to an existing poll
+    - Limit some features to logged in users
+
 
 ***Tutorials:
 
