@@ -135,12 +135,22 @@
         render: function() {
           return (
             React.createElement('a', {
-              className: 'btn-twitter', //need to add css class
-              href: 'https://twitter.com/intent/tweet?text=Hello%20world&url=' + shareUrl,
+              className: 'fa fa-twitter',
+              href: 'https://twitter.com/intent/tweet?text=Hello%20world&text=check%20out%20this%20poll!&url=' + shareUrl,
               target: '_blank'
-            }, 'Tweet'));
+            }, ''));
         }
+      });
 
+      var facebook=React.createClass({
+        render: function() {
+          return (
+            React.createElement('a', {
+              className: 'fa fa-facebook',
+              href: 'https://www.facebook.com/sharer/sharer.php?' + shareUrl,
+              target: '_blank'
+            }, ''));
+        }
       });
 
       ReactDOM.render(
@@ -152,7 +162,8 @@
                }, 'Show Results'),
                React.createElement(resetClass)),
             React.createElement('div', {className: 'btn-container'},
-                  React.createElement(tweet)),
+                  React.createElement(tweet),
+                  React.createElement(facebook)),
             React.createElement('div', {className: 'btn-container'},
                React.createElement('a', {
                   href: appUrl + '/delete/' + id,

@@ -130,6 +130,7 @@ img {
 	padding: 10px 5px;
 	width: 100px;
 	font-weight: 500;
+  text-decoration: none;
 }
 
 .btn:focus {	/* Remove outline when hovering over button */
@@ -201,4 +202,35 @@ span {
 	color: #FFFFFF;
 	display: inline;
 	margin: 0;
+}
+
+/*Social Media Buttons*/
+/* Style all font awesome icons */
+.fa {
+    margin: 5px;
+    padding: 10px;
+    font-size: 50px;
+    width: 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+/* Add a hover effect */
+.fa:hover {
+    opacity: 0.7;
+}
+
+/* Set a specific color for each brand */
+
+/* Facebook */
+.fa-facebook {
+    background: #3B5998;
+    color: white;
+}
+
+/* Twitter */
+.fa-twitter {
+    background: #55ACEE;
+    color: white;
 }
