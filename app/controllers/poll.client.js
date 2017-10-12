@@ -8,6 +8,7 @@
    console.log(id);
    var dataUrl = appUrl + '/renderPoll/' + id;
    var voteUrl = appUrl + '/vote/' + id;
+   var shareUrl = appUrl + '/poll?' + id;
    var output = {};
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
@@ -130,6 +131,18 @@
          }
       });
 
+      var tweet=React.createClass({
+        render: function() {
+          return (
+            React.createElement('a', {
+              className: 'btn-twitter', //need to add css class
+              href: 'https://twitter.com/intent/tweet?text=Hello%20world&url=' + shareUrl,
+              target: '_blank'
+            }, 'Tweet'));
+        }
+
+      });
+
       ReactDOM.render(
          React.createElement('div', {},
             React.createElement('div', {className: 'btn-container'},
@@ -138,6 +151,8 @@
                   onClick: function(){updateClickCount()}
                }, 'Show Results'),
                React.createElement(resetClass)),
+            React.createElement('div', {className: 'btn-container'},
+                  React.createElement(tweet)),
             React.createElement('div', {className: 'btn-container'},
                React.createElement('a', {
                   href: appUrl + '/delete/' + id,

@@ -1,7 +1,8 @@
 ***TO DO
     - Share poll via twitter or facebook (this means each poll needs a unique URL)
     - Add choices to an existing poll
-    - Limit some features to logged in users
+    - When creating poll, changing # of choices shouldn't delete all input (append instead of re-render)
+    - Limit some features to logged in users (creating/deleting poll)
 
 
 ***Tutorials:
