@@ -1,12 +1,7 @@
 ***TO DO
     - Add choices to an existing poll
     - When creating poll, changing # of choices shouldn't delete all input (append instead of re-render)
-    - Limit some features to logged in users (creating/deleting poll)*
-      - Create poll
-      - Delete poll
-      - Add choices to existing poll
-      - View all polls by the user
-    *This means each poll data must contain user information
+    - Include poll question as text when tweeting
 
 
 ***Tutorials:

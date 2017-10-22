@@ -30,7 +30,7 @@ module.exports = function (app, passport) {
 	app.route('/logout')
 		.get(function (req, res) {
 			req.logout();
-			res.redirect('/login');
+			res.redirect('/');
 		});
 
 	app.route('/profile')
@@ -52,31 +52,26 @@ module.exports = function (app, passport) {
 			failureRedirect: '/login'
 		}));
 
-	app.route('/api/:id/clicks*')
-		.get(isLoggedIn, clickHandler.getClicks)
-		.post(isLoggedIn, clickHandler.addClick)
-		.delete(isLoggedIn, clickHandler.resetClicks);
-		
 	app.route('/poll*')
 		.get(/*isLoggedIn, */function (req, res) {
 			res.sendFile(path + '/public/poll.html');
 		});
-		
+
 	app.route('/vote/:id/:choice')
 		.get(poll.addClick)
 		.delete(poll.resetClicks);
-		
+
 	app.route('/form*')
-		.get(/*isLoggedIn,*/ function (req, res) {
+		.get(isLoggedIn, function (req, res) {
 			res.sendFile(path + '/public/form.html')})
-		.post(/*isLoggedIn,*/ poll.newQuestion);
-		
+		.post(isLoggedIn, poll.newQuestion);
+
 	app.route('/renderQuestions')
 		.get(poll.getQuestions);
 
 	app.route('/renderPoll/:id')
 		.get(poll.getPoll);
-		
+
 	app.route('/delete/:id')
-		.get(poll.deletePoll);
+		.get(isLoggedIn, poll.deletePoll);
 };

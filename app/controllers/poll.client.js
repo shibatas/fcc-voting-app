@@ -131,7 +131,7 @@
          }
       });
 
-      var tweet=React.createClass({
+      var tweet = React.createClass({
         render: function() {
           return (
             React.createElement('a', {
