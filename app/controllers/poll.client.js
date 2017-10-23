@@ -108,6 +108,11 @@
    }
 
    function renderActions (data) {
+      console.log(data);
+
+      var shareTxt = 'text=' + data.question;
+      console.log(shareTxt);
+
       var resetClass = React.createClass({
          propTypes: {
             reset: React.PropTypes.func
@@ -136,7 +141,7 @@
           return (
             React.createElement('a', {
               className: 'fa fa-twitter',
-              href: 'https://twitter.com/intent/tweet?text=Hello%20world&text=check%20out%20this%20poll!&url=' + shareUrl,
+              href: 'https://twitter.com/intent/tweet?' + shareTxt + '&url=' + shareUrl,
               target: '_blank'
             }, ''));
         }

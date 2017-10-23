@@ -42,7 +42,7 @@
   }
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, function (data) {
-     console.log(data);
+     //console.log(data);
 
      if (data[0] !== '<') {
       var userObject = JSON.parse(data);
