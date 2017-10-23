@@ -52,7 +52,7 @@ module.exports = function (app, passport) {
 			failureRedirect: '/login'
 		}));
 
-	app.route('/poll*')
+	app.route('/poll/:id')
 		.get(/*isLoggedIn, */function (req, res) {
 			res.sendFile(path + '/public/poll.html');
 		});
@@ -64,13 +64,13 @@ module.exports = function (app, passport) {
 	app.route('/form*')
 		.get(isLoggedIn, function (req, res) {
 			res.sendFile(path + '/public/form.html')})
-		.post(isLoggedIn, poll.newQuestion);
+		.post(isLoggedIn, poll.newPoll);
 
 	app.route('/renderQuestions')
-		.get(poll.getQuestions);
+		.get(poll.allPolls);
 
 	app.route('/renderPoll/:id')
-		.get(poll.getPoll);
+		.get(poll.getPollById);
 
 	app.route('/delete/:id')
 		.get(isLoggedIn, poll.deletePoll);

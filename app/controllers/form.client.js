@@ -1,36 +1,7 @@
 'use strict';
 
-/*global appUrl React ReactDOM*/
-/*global ajaxFunctions*/
-
-/*function submitForm() {
-   var apiUrl = appUrl + '/form';
-   var newPoll = {
-   	question: document.getElementById('question').value,
-	   choices: []
-      };
-   
-   for (var i=1; i<6; i++) {
-      var str = 'choice' + i.toString();
-      if (document.getElementById(str).value) {
-         newPoll.choices[i-1] = {
-            'id':  i,
-            'choice': document.getElementById(str).value,
-            'count': 0
-         };
-      }
-   }
-   
-   console.log(JSON.stringify(newPoll));
-   
-   ajaxFunctions.ready(ajaxFunctions.ajaxRequest('POST', apiUrl, function(id) {
-      console.log(id);
-      window.location = appUrl;
-   }, newPoll));
-}*/
-
 function renderForm(numChoices) {
-   var question = React.createClass({
+  var question = React.createClass({
       render: function() {
          return (
             React.createElement('p',{},
@@ -49,7 +20,7 @@ function renderForm(numChoices) {
       propTypes: {
          num: React.PropTypes.number.isRequired
       },
-   
+
       render: function() {
          return (
             React.createElement('p',{},
@@ -65,7 +36,7 @@ function renderForm(numChoices) {
       }
    });
    var arr = [];
-   
+
    for (var i=0; i<numChoices; i++) {
       arr.push(React.createElement(choice, {num: i+1}));
    }
@@ -74,12 +45,12 @@ function renderForm(numChoices) {
       propTypes: {
          moreChoice: React.PropTypes.func
       },
-   
+
       moreChoice: function() {
          console.log('add another line');
          renderForm(numChoices+1);
       },
-   
+
       render: function() {
          return (
             React.createElement('button',{
@@ -94,14 +65,14 @@ function renderForm(numChoices) {
       propTypes: {
          lessChoice: React.PropTypes.func
       },
-   
+
       lessChoice: function() {
          if (numChoices > 2) {
             console.log('delete line');
             renderForm(numChoices-1);
          }
       },
-   
+
       render: function() {
          return (
             React.createElement('button',{
@@ -111,19 +82,21 @@ function renderForm(numChoices) {
          );
       }
    });
-   
+
    var submitBtn = React.createClass({
       propTypes: {
          submitForm: React.PropTypes.func
       },
-      
+
       submitForm: function() {
-         var apiUrl = appUrl + '/form';
+         var pollApi = appUrl + '/form';
+         var userApi = appUrl + '/api/:id';
          var newPoll = {
       	   question: document.getElementById('question').value,
-	         choices: []
+	         choices: [],
+           username: ''
          };
-   
+
          for (var i=1; i<=numChoices; i++) {
             var str = 'choice' + i.toString();
             if (document.getElementById(str).value) {
@@ -134,13 +107,19 @@ function renderForm(numChoices) {
                };
             }
          }
-   
-         ajaxFunctions.ready(ajaxFunctions.ajaxRequest('POST', apiUrl, function(id) {
-            console.log(id);
-            window.location = appUrl;
-         }, newPoll));
+
+         //retrieve username of the logged in user
+         ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+             var userObject = JSON.parse(data);
+             newPoll.username = userObject.username;
+             //submit new poll to server
+             ajaxFunctions.ajaxRequest('POST', pollApi, function(id) {
+                console.log(id);
+                window.location = appUrl;
+             }, newPoll);
+           }));
       },
-      
+
       render: function() {
          return (
             React.createElement('button',{
@@ -158,15 +137,15 @@ function renderForm(numChoices) {
          arr),
       document.getElementById('form-container')
    );
-   
+
    ReactDOM.render(
-      React.createElement('div', {className: 'btn-container'}, 
+      React.createElement('div', {className: 'btn-container'},
          React.createElement(addBtn),
          React.createElement(delBtn),
          React.createElement(submitBtn)),
       document.getElementById('actions')
    );
-   
+
    return numChoices;
 }
 
@@ -174,7 +153,7 @@ var numChoices
 
 numChoices = renderForm(3);
 
-console.log(numChoices);
+//console.log(numChoices);
 
 /*<form method="post" id="form">
 				<p>Type the question and the choices below</p>

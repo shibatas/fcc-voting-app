@@ -108,7 +108,7 @@ img {
 	padding: 0;
 	margin: -25px 0 0 0;
 	font-weight: 500;
-	font-size: 60px;
+	font-size: 40px;
 	color: #FFA000;
 }
 
@@ -141,6 +141,10 @@ img {
 	transform: scale(0.9, 0.9);
 	-webkit-transform: scale(0.9, 0.9);
 	-moz-transform: scale(0.9, 0.9);
+}
+
+.btn:hover {
+  opacity: 0.7;
 }
 
 .btn-delete {	/* Styling for delete button */

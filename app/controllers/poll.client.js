@@ -4,16 +4,60 @@
    /*global ajaxFunctions appUrl React ReactDOM d3*/
 
    var apiUrl = appUrl + '/poll/:id';
-   var id = window.location.search.substr(1);
-   console.log(id);
+   var id = window.location.pathname.split('/').pop();
    var dataUrl = appUrl + '/renderPoll/' + id;
    var voteUrl = appUrl + '/vote/' + id;
-   var shareUrl = appUrl + '/poll?' + id;
+   var shareUrl = appUrl + '/poll/' + id;
+   var userApi = appUrl + '/api/:id';
    var output = {};
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
-      renderPage(result);
+
+      var poll = JSON.parse(result);
+
+      renderPage(poll);
+
+      isLoggedIn(function() {
+        shareButtons(poll);
+      });
+
+      isOwner(poll, function() {
+        renderAuthorContents(poll);
+      });
+
    }));
+
+   //runs callback only if logged in as the owner of the poll
+   function isOwner(poll, callback) {
+     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+       if (data[0] !== '<') {
+         var userObject = JSON.parse(data);
+         var username = userObject.username;
+         //check to see if user is the poll owner
+         if (poll.username === userObject.username) {
+           console.log('Verified as poll creator.');
+           callback();
+         }
+       }
+     }));
+   }
+
+   //runs callback only if logged in
+   function isLoggedIn(callback) {
+     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+       if (data[0] !== '<') {
+         var userObject = JSON.parse(data);
+         var username = userObject.username;
+         //check to see if user is the poll owner
+         if (userObject.username) {
+           console.log('Verified as logged in.');
+           callback();
+         }
+       } else {
+         console.log('not logged in');
+       }
+     }));
+   }
 
    function updateClickCount () {
       console.log('update click count');
@@ -24,19 +68,74 @@
       }));
    }
 
-   function renderPage(result) {
-      var data = JSON.parse(result);
+   function renderPage(poll) {
+      renderChoices(poll);
 
-      renderChoices(data);
-
-      renderActions(data);
+      renderActions();
 
       renderPage.state = true;
    }
 
-   function renderChoices (data) {
+   function renderAuthorContents(poll) {
+     //console.log(poll);
+     var resetClass = React.createClass({
+        propTypes: {
+           reset: React.PropTypes.func
+        },
 
-      var choices = data.choices;
+        reset: function() {
+          isOwner(poll, function() {
+            ajaxFunctions.ajaxRequest('DELETE', voteUrl+"/RESET", function(result) {
+                 hideResult();
+            });
+          });
+        },
+
+        render: function() {
+           return (
+             React.createElement('button', {
+                 className: 'btn btn-delete',
+                 onClick: this.reset
+              }, "RESET")
+           );
+        }
+     });
+
+     var deleteClass = React.createClass({
+       propTypes: {
+         delete: React.PropTypes.func
+       },
+       delete: function() {
+         isOwner(poll, function () {
+           ajaxFunctions.ajaxRequest('GET', appUrl + '/delete/' + poll._id, function(result) {
+                 console.log('poll successfully deleted. Redirect to home.');
+                 window.location = appUrl;
+           });
+         });
+       },
+       render: function() {
+         return(
+           React.createElement('btn', {
+              className: 'btn btn-delete',
+              onClick: this.delete
+           }, 'Delete this poll')
+         );
+       }
+
+     });
+
+     ReactDOM.render(
+        React.createElement('div', {},
+           React.createElement('div', {className: 'btn-container'},
+              React.createElement('p', {}, 'As the creator of this poll you can also do the following:'),
+              React.createElement(resetClass),
+              React.createElement(deleteClass))),
+        document.getElementById('author-actions'));
+   }
+
+   function renderChoices (poll) {
+
+      var choices = poll.choices;
 
       var item = React.createClass({
          propTypes: {
@@ -47,7 +146,7 @@
          },
 
          submitVote: function() {
-            console.log(this.props.id);
+            //console.log(this.props.id);
             ajaxFunctions.ready(ajaxFunctions.ajaxRequest(
               'GET', voteUrl+"/"+this.props.id, function(result) {
                 console.log(JSON.stringify(result));
@@ -72,20 +171,21 @@
 
       ReactDOM.render(
          React.createElement('div', {},
-            React.createElement('p', {}, data.question),
+            React.createElement('p', {}, poll.question),
             React.createElement('btn', {}, buttons)),
          document.getElementById('vote')
       );
    }
 
-   function renderResult (data) {
+   function renderResult (poll) {
+     //confirm that results are not empty.
      var sum = 0;
-     for (var prop in data) {
-       sum += data[prop].count;
+     for (var prop in poll) {
+       sum += poll[prop].count;
      };
 
      if (sum > 0) {
-       chart(data);
+       chart(poll);
        renderResult.state = true;
      } else {
        ReactDOM.render(
@@ -107,80 +207,51 @@
      renderResult.state = false;
    }
 
-   function renderActions (data) {
-      console.log(data);
+   function shareButtons(poll) {
+     var shareTxt = 'text=' + poll.question;
 
-      var shareTxt = 'text=' + data.question;
-      console.log(shareTxt);
+     var tweet = React.createClass({
+       render: function() {
+         return (
+           React.createElement('a', {
+             className: 'fa fa-twitter',
+             href: 'https://twitter.com/intent/tweet?' + shareTxt + '&url=' + shareUrl,
+             target: '_blank'
+           }, ''));
+       }
+     });
 
-      var resetClass = React.createClass({
-         propTypes: {
-            reset: React.PropTypes.func
-         },
+     var facebook=React.createClass({
+       render: function() {
+         return (
+           React.createElement('a', {
+             className: 'fa fa-facebook',
+             href: 'https://www.facebook.com/sharer/sharer.php?' + shareUrl,
+             target: '_blank'
+           }, ''));
+       }
+     });
 
-         reset: function() {
-            ajaxFunctions.ready(ajaxFunctions.ajaxRequest('DELETE', voteUrl+"/RESET", function(result) {
-               console.log(JSON.stringify(result));
-                  //updateClickCount();
-                  hideResult();
-            }));
-         },
+     ReactDOM.render(
+        React.createElement('div', {className: 'btn-container'},
+              React.createElement(tweet),
+              React.createElement(facebook)),
+        document.getElementById('share'));
+   }
 
-         render: function() {
-            return (
-              React.createElement('button', {
-                  className: 'btn btn-delete',
-                  onClick: this.reset
-               }, "RESET")
-            );
-         }
-      });
-
-      var tweet = React.createClass({
-        render: function() {
-          return (
-            React.createElement('a', {
-              className: 'fa fa-twitter',
-              href: 'https://twitter.com/intent/tweet?' + shareTxt + '&url=' + shareUrl,
-              target: '_blank'
-            }, ''));
-        }
-      });
-
-      var facebook=React.createClass({
-        render: function() {
-          return (
-            React.createElement('a', {
-              className: 'fa fa-facebook',
-              href: 'https://www.facebook.com/sharer/sharer.php?' + shareUrl,
-              target: '_blank'
-            }, ''));
-        }
-      });
+   function renderActions () {
 
       ReactDOM.render(
-         React.createElement('div', {},
-            React.createElement('div', {className: 'btn-container'},
-               React.createElement('button', {
-                  className: 'btn btn-show',
-                  onClick: function(){updateClickCount()}
-               }, 'Show Results'),
-               React.createElement(resetClass)),
-            React.createElement('div', {className: 'btn-container'},
-                  React.createElement(tweet),
-                  React.createElement(facebook)),
-            React.createElement('div', {className: 'btn-container'},
-               React.createElement('a', {
-                  href: appUrl + '/delete/' + id,
-                  className: 'btn btn-delete'
-               }, 'Delete this poll')),
-            React.createElement('div', {className: 'btn-container'},
-               React.createElement('button', {
-                  className: 'btn',
-                  onClick: function(){window.location = appUrl}},
-                  'Back to Poll Selection'
-               ))
-            ),
+         React.createElement('div', {className: 'btn-container'},
+           React.createElement('button', {
+              className: 'btn btn-delete',
+              onClick: function(){updateClickCount()}
+           }, 'Show Results'),
+           React.createElement('button', {
+              className: 'btn btn-delete',
+              onClick: function(){window.location = appUrl}},
+              'Back to Poll Selection'
+           )),
          document.getElementById('actions'));
    }
 

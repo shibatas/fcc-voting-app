@@ -12,11 +12,6 @@
       element.innerHTML = data[userProperty];
    }
 
-   /*<a class="menu" href="/login">Login</a>
-   <a class="menu" href="/profile">Profile</a>
-   <p>|</p>
-   <a class="menu" href="/logout">Logout</a>*/
-
   function renderLinks(isLoggedIn) {
     var login = React.createElement('div', {},
       React.createElement('a', {
