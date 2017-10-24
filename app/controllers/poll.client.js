@@ -9,6 +9,7 @@
    var voteUrl = appUrl + '/vote/' + id;
    var shareUrl = appUrl + '/poll/' + id;
    var userApi = appUrl + '/api/:id';
+   var editUrl = appUrl + '/form?action=edit&id=' + id;
    var output = {};
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
@@ -78,6 +79,17 @@
 
    function renderAuthorContents(poll) {
      //console.log(poll);
+     var editClass = React.createClass({
+        render: function() {
+           return (
+             React.createElement('button', {
+                 className: 'btn btn-delete',
+                 onClick: function() {window.location = editUrl;}
+              }, "Edit Poll")
+           );
+        }
+     });
+
      var resetClass = React.createClass({
         propTypes: {
            reset: React.PropTypes.func
@@ -128,12 +140,14 @@
         React.createElement('div', {},
            React.createElement('div', {className: 'btn-container'},
               React.createElement('p', {}, 'As the creator of this poll you can also do the following:'),
+              React.createElement(editClass),
               React.createElement(resetClass),
               React.createElement(deleteClass))),
         document.getElementById('author-actions'));
    }
 
    function renderChoices (poll) {
+     console.log(poll.total);
 
       var choices = poll.choices;
 
@@ -194,6 +208,8 @@
          document.getElementById('results')
        );
      }
+     //re-render buttons after state change
+     renderActions();
    }
 
    function hideResult() {
@@ -240,24 +256,32 @@
    }
 
    function renderActions () {
+      var showResult = null;
+
+      if (renderResult.state !== true) {
+        showResult = React.createElement('button', {
+         className: 'btn btn-delete',
+         onClick: function(){
+           updateClickCount();
+           renderActions(); }
+         }, 'Show Results');
+      }
+
+      var backToPollSelection = React.createElement('button', {
+         className: 'btn btn-delete',
+         onClick: function(){window.location = appUrl}},
+         'Back to Poll Selection');
 
       ReactDOM.render(
          React.createElement('div', {className: 'btn-container'},
-           React.createElement('button', {
-              className: 'btn btn-delete',
-              onClick: function(){updateClickCount()}
-           }, 'Show Results'),
-           React.createElement('button', {
-              className: 'btn btn-delete',
-              onClick: function(){window.location = appUrl}},
-              'Back to Poll Selection'
-           )),
+           showResult,
+           backToPollSelection),
          document.getElementById('actions'));
    }
 
    function chart(chartData) {
-      console.log('graph function');
-      console.log(chartData);
+      //console.log('graph function');
+      //console.log(chartData);
 
      var targetID = '#results';
 

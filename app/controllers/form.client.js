@@ -1,6 +1,64 @@
 'use strict';
 
-function renderForm(numChoices) {
+var userApi = appUrl + '/api/:id';
+var pollUrl = appUrl + '/renderPoll/';
+var numChoices = 3;
+var poll = {
+  question: '',
+  choices: [],
+  username: ''
+};
+var newChoice = {
+   'id': 0,
+   'choice': '',
+   'count': 0
+};
+
+var params = new URLSearchParams(window.location.search);
+var action = params.get('action');
+var pollId = params.get('id');
+console.log(pollId);
+
+//pre-fill form for editing
+if (action === 'edit') {
+  //is logged in?
+  ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+    if (data[0] !== '<') {
+      var userObject = JSON.parse(data);
+      var username = userObject.username;
+      if (username) {
+        console.log('Verified as logged in.');
+        //retrieve poll info by ID
+        ajaxFunctions.ajaxRequest('GET', pollUrl + pollId, function (data) {
+          var parsed = JSON.parse(data);
+          //is poll owner?
+          if (parsed.username === username) {
+            console.log('Verified as poll owner.');
+            poll = parsed;
+            numChoices = poll.choices.length;
+            renderForm();
+          }
+        });
+      }
+    } else {
+      console.log('not logged in');
+      window.location = '/login';
+    }
+
+    }));
+}
+
+//render empty form to make new poll
+if (action === 'new') {
+  for (var i=0; i<numChoices; i++) {
+    poll.choices.push(newChoice);
+  }
+
+  renderForm();
+}
+
+function renderForm() {
+  console.log(poll);
   var question = React.createClass({
       render: function() {
          return (
@@ -11,7 +69,9 @@ function renderForm(numChoices) {
                   id: 'question',
                   rows: '3',
                   cols: '25',
-                  style: {'verticalAlign': 'top'}
+                  style: {'verticalAlign': 'top'},
+                  onChange: function() { update(); },
+                  defaultValue: poll.question
                }))
          );
       }
@@ -22,6 +82,7 @@ function renderForm(numChoices) {
       },
 
       render: function() {
+        var text = poll.choices[this.props.num-1].choice;
          return (
             React.createElement('p',{},
                'Choice ' + this.props.num + ': ',
@@ -30,7 +91,9 @@ function renderForm(numChoices) {
                   id: 'choice' + this.props.num,
                   rows: '1',
                   cols: '25',
-                  style: {'verticalAlign': 'top'}
+                  style: {'verticalAlign': 'top'},
+                  onChange: function() { update(); },
+                  defaultValue: text
                }))
          );
       }
@@ -47,8 +110,10 @@ function renderForm(numChoices) {
       },
 
       moreChoice: function() {
-         console.log('add another line');
-         renderForm(numChoices+1);
+         //console.log('add another line');
+         poll.choices.push(newChoice);
+         numChoices++;
+         renderForm(numChoices, poll);
       },
 
       render: function() {
@@ -68,8 +133,10 @@ function renderForm(numChoices) {
 
       lessChoice: function() {
          if (numChoices > 2) {
-            console.log('delete line');
-            renderForm(numChoices-1);
+            //console.log('delete line');
+            poll.choices.pop();
+            numChoices--;
+            renderForm(poll);
          }
       },
 
@@ -91,33 +158,49 @@ function renderForm(numChoices) {
       submitForm: function() {
          var pollApi = appUrl + '/form';
          var userApi = appUrl + '/api/:id';
-         var newPoll = {
-      	   question: document.getElementById('question').value,
-	         choices: [],
-           username: ''
-         };
+         var updateApi = appUrl + '/updatePoll'
 
-         for (var i=1; i<=numChoices; i++) {
-            var str = 'choice' + i.toString();
-            if (document.getElementById(str).value) {
-               newPoll.choices[i-1] = {
-                  'id':  i,
-                  'choice': document.getElementById(str).value,
-                  'count': 0
-               };
-            }
+         //submit a new poll
+         if (action === 'new') {
+           var newPoll = {};
+
+           if (poll.question) {
+             newPoll.question = poll.question;
+           } else {
+             alert('Please fill out a question');
+             return;
+           }
+
+           newPoll.choices = [];
+           for (var i=0; i<poll.choices.length; i++) {
+             if (poll.choices[i].choice !== '') {
+               newPoll.choices.push(poll.choices[i]);
+             }
+           }
+
+           console.log(newPoll);
+
+           //retrieve username of the logged in user
+           ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+               var userObject = JSON.parse(data);
+               newPoll.username = userObject.username;
+               //submit new poll to server
+               ajaxFunctions.ajaxRequest('POST', pollApi, function(id) {
+                  console.log(id);
+                  window.location = appUrl;
+               }, newPoll);
+           }));
          }
 
-         //retrieve username of the logged in user
-         ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
-             var userObject = JSON.parse(data);
-             newPoll.username = userObject.username;
-             //submit new poll to server
-             ajaxFunctions.ajaxRequest('POST', pollApi, function(id) {
-                console.log(id);
-                window.location = appUrl;
-             }, newPoll);
-           }));
+         if (action === 'edit') {
+           console.log('update existing poll');
+           //console.log(poll);
+
+           ajaxFunctions.ajaxRequest('POST', updateApi, function() {
+              window.location = appUrl + '/poll/' + pollId;
+           }, poll);
+
+         }
       },
 
       render: function() {
@@ -149,21 +232,23 @@ function renderForm(numChoices) {
    return numChoices;
 }
 
-var numChoices
-
-numChoices = renderForm(3);
-
-//console.log(numChoices);
-
-/*<form method="post" id="form">
-				<p>Type the question and the choices below</p>
-				<br/>
-				<p>Question:&nbsp&nbsp<textarea name="question" id="question" rows="3" cols="25" style="vertical-align: top"></textarea></p>
-				<br/>
-				<p>Choice 1:&nbsp&nbsp<input name="choice1" id="choice1"></input></p>
-				<p>Choice 2:&nbsp&nbsp<input name="choice2" id="choice2"></input></p>
-				<p>Choice 3:&nbsp&nbsp<input name="choice3" id="choice3"></input></p>
-				<p>Choice 4:&nbsp&nbsp<input name="choice4" id="choice4"></input></p>
-				<p>Choice 5:&nbsp&nbsp<input name="choice5" id="choice5"></input></p>
-			</form>
-				<p><button class="btn" onClick="submitForm()">Submit</button>*/
+function update() {
+  poll.question = document.getElementById('question').value;
+  for (var i=1; i<=poll.choices.length; i++) {
+     var str = 'choice' + i.toString();
+     if (document.getElementById(str).value) {
+        poll.choices[i-1] = {
+           'id':  i,
+           'choice': document.getElementById(str).value,
+           'count': 0
+        };
+     } else {
+       poll.choices[i-1] = {
+          'id':  i,
+          'choice': '',
+          'count': 0
+       };
+     }
+  }
+  //console.log(poll);
+}

@@ -1,7 +1,7 @@
 'use strict';
 
 var path = process.cwd();
-var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+//var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 var Poll = require(path + '/app/controllers/poll.server.js');
 
 module.exports = function (app, passport) {
@@ -14,7 +14,7 @@ module.exports = function (app, passport) {
 		}
 	}
 
-	var clickHandler = new ClickHandler();
+	//var clickHandler = new ClickHandler();
 	var poll = new Poll();
 
 	app.route('/')
@@ -68,6 +68,9 @@ module.exports = function (app, passport) {
 
 	app.route('/renderPolls')
 		.get(poll.allPolls);
+
+	app.route('/updatePoll')
+		.post(isLoggedIn, poll.updatePoll);
 
 	app.route('/renderPoll/:id')
 		.get(poll.getPollById);

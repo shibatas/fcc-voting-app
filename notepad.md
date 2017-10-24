@@ -1,10 +1,5 @@
 ### TO DO
-    * Add total # of votes to each poll button in index.html
-    * Add choices to an existing poll
-      https://stackoverflow.com/questions/33049707/push-items-into-mongo-array-via-mongoose
-    * When creating poll, changing # of choices shouldn't delete all input (append instead of re-render)
-      (Or, make one text box for inputting all choices, separate choice by semicolon, for example)
-    * Logged in user can access all created polls and edit them. (Include deleting and resetting poll here)
+    * 
 
 
 ### Tutorials:

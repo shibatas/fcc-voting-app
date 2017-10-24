@@ -8,8 +8,8 @@ function poll () {
 	this.addClick = function (req, res) {
 		var id = req.params['id'];
 		var choiceNum = req.params['choice'];
-		console.log(id);
-		console.log(choiceNum);
+		//console.log(id);
+		//console.log(choiceNum);
 
 		Questions
 			.findOneAndUpdate({
@@ -55,7 +55,7 @@ function poll () {
 		Questions.create(req.body, function (err, doc) {
 			if (err) return err;
 			id = JSON.stringify(doc._id);
-			console.log(id);
+			//console.log(id);
 			res.send(id);
 		});
 
@@ -90,6 +90,21 @@ function poll () {
 				if (err) { throw err; }
 				res.json(data[0]);
 			});
+	};
+
+	this.updatePoll = function (req, res) {
+
+		var newPoll = req.body;
+		//console.log(req.body);
+
+		Questions
+			.findOneAndUpdate(
+				{_id: newPoll._id},
+				newPoll,
+				function(err, data) {
+					if (err) { throw err; }
+					res.json(data[0]);
+				});
 	};
 
 	this.deletePoll = function (req, res) {

@@ -116,6 +116,7 @@ img {
 
 .btn-container {	/* Styling for the div that contains the buttons */
 	margin: 0 auto 0 auto;
+  max-width: 80%;
 	text-align: center;
 }
 
@@ -128,7 +129,7 @@ img {
 	font-size: 14px;
 	border-radius: 3px;
 	padding: 10px 5px;
-	width: 100px;
+	width: 130px;
 	font-weight: 500;
   text-decoration: none;
 }
