@@ -64,21 +64,19 @@ function poll () {
 	};
 
 	this.allPolls = function (req, res) {
+		var username = req.query.username;
+		var useronly = (req.query.useronly == 'true');
+		var query = {};
+
+		if (useronly) {
+				query = { 'username' : username }
+		}
+
 		Questions
-			.find({})
+			.find(query)
 			.exec(function (err, result) {
 				if (err) { throw err; }
 
-				res.json(result);
-			});
-	}
-
-	this.myPolls = function (req, res) {
-		var username = req.params['username'];
-		Questions
-			.find({})
-			.exec(function (err, result) {
-				if (err) { throw err; }
 				res.json(result);
 			});
 	}

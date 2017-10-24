@@ -66,7 +66,7 @@ module.exports = function (app, passport) {
 			res.sendFile(path + '/public/form.html')})
 		.post(isLoggedIn, poll.newPoll);
 
-	app.route('/renderQuestions')
+	app.route('/renderPolls')
 		.get(poll.allPolls);
 
 	app.route('/renderPoll/:id')
