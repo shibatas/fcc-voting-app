@@ -1,5 +1,6 @@
 ### TO DO
-    * 
+    * Option to vote a new option (logged in user)
+    * Restrict to one vote per IP address or user
 
 
 ### Tutorials:
