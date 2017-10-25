@@ -98,8 +98,9 @@ function renderForm() {
          );
       }
    });
-   var arr = [];
 
+   //creating array of choice fields based on numChoices
+   var arr = [];
    for (var i=0; i<numChoices; i++) {
       arr.push(React.createElement(choice, {num: i+1}));
    }
@@ -212,6 +213,7 @@ function renderForm() {
          );
       }
    });
+
 
    ReactDOM.render(
       React.createElement('form',{method:'post', id:'form'},

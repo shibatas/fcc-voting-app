@@ -74,6 +74,7 @@
    var actions = function() {
      ReactDOM.render(
         React.createElement('div', {className: 'btn-container'},
+           React.createElement('p', {}, 'Authenticated User Options:'),
            React.createElement('button', {
                  type: 'submit',
                  className: 'btn btn-delete',

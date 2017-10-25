@@ -39,6 +39,15 @@ p {
 	padding: 0;
 }
 
+.box {
+  background-color: #ffbd4d;
+  margin: auto;
+  margin-bottom: 10px;
+  width: 50%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
 /****** Header Styling ******/
 
 header p {
@@ -151,6 +160,12 @@ img {
 .btn-delete {	/* Styling for delete button */
 	background-color: #ECEFF1;
 	color: #212121;
+}
+
+.btn-submit {	/* Styling for submit button */
+  width: 70px;
+  height: 30px;
+  line-height: 10px;
 }
 
 #click-nbr {

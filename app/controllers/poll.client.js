@@ -7,14 +7,57 @@
    var id = window.location.pathname.split('/').pop();
    var dataUrl = appUrl + '/renderPoll/' + id;
    var voteUrl = appUrl + '/vote/' + id;
-   var shareUrl = appUrl + '/poll/' + id;
+   var pollUrl = appUrl + '/poll/' + id;
    var userApi = appUrl + '/api/:id';
    var editUrl = appUrl + '/form?action=edit&id=' + id;
-   var output = {};
+   var updateApi = appUrl + '/updatePoll';
+   var poll = {};
+   var newChoice;
+
+   //runs callback only if logged in as the owner of the poll
+   var isOwner = function(poll, callback) {
+     isOwner.state = false;
+     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+       if (data[0] !== '<') {
+         var userObject = JSON.parse(data);
+         var username = userObject.username;
+         //check to see if user is the poll owner
+         if (poll.username === userObject.username) {
+           console.log('Verified as poll creator.');
+           isOwner.state = true;
+           callback();
+         }
+       }
+     }));
+     return isOwner.state;
+   }
+   //runs callback only if logged in
+   var isLoggedIn = function(callback) {
+     isLoggedIn.state = false;
+     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
+       if (data[0] !== '<') {
+         var userObject = JSON.parse(data);
+         var username = userObject.username;
+         //check to see if user is the poll owner
+         if (userObject.username) {
+           console.log('Verified as logged in.');
+           isLoggedIn.state = true;
+           if (callback) {
+             callback();
+           }
+         }
+       } else {
+         console.log('not logged in');
+       }
+     }));
+     return isLoggedIn.state;
+   }
+
+   isLoggedIn();
 
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
 
-      var poll = JSON.parse(result);
+      poll = JSON.parse(result);
 
       renderPage(poll);
 
@@ -23,42 +66,10 @@
       });
 
       isOwner(poll, function() {
-        renderAuthorContents(poll);
+        renderOwnerContents(poll);
       });
 
    }));
-
-   //runs callback only if logged in as the owner of the poll
-   function isOwner(poll, callback) {
-     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
-       if (data[0] !== '<') {
-         var userObject = JSON.parse(data);
-         var username = userObject.username;
-         //check to see if user is the poll owner
-         if (poll.username === userObject.username) {
-           console.log('Verified as poll creator.');
-           callback();
-         }
-       }
-     }));
-   }
-
-   //runs callback only if logged in
-   function isLoggedIn(callback) {
-     ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', userApi, function (data) {
-       if (data[0] !== '<') {
-         var userObject = JSON.parse(data);
-         var username = userObject.username;
-         //check to see if user is the poll owner
-         if (userObject.username) {
-           console.log('Verified as logged in.');
-           callback();
-         }
-       } else {
-         console.log('not logged in');
-       }
-     }));
-   }
 
    function updateClickCount () {
       console.log('update click count');
@@ -69,7 +80,7 @@
       }));
    }
 
-   function renderPage(poll) {
+   function renderPage() {
       renderChoices(poll);
 
       renderActions();
@@ -77,7 +88,7 @@
       renderPage.state = true;
    }
 
-   function renderAuthorContents(poll) {
+   function renderOwnerContents() {
      //console.log(poll);
      var editClass = React.createClass({
         render: function() {
@@ -85,7 +96,7 @@
              React.createElement('button', {
                  className: 'btn btn-delete',
                  onClick: function() {window.location = editUrl;}
-              }, "Edit Poll")
+              }, "Edit this poll")
            );
         }
      });
@@ -146,8 +157,8 @@
         document.getElementById('author-actions'));
    }
 
-   function renderChoices (poll) {
-     console.log(poll.total);
+   function renderChoices() {
+     //console.log(poll.total);
 
       var choices = poll.choices;
 
@@ -183,23 +194,86 @@
 
       var buttons = choices.map(function(choices) { return React.createElement(item, choices) });
 
+      //populate newChoice button only if logged in.
+      var newChoiceClass = React.createClass({
+        propTypes: {
+          form: React.PropTypes.func
+        },
+        form: function() {
+          ReactDOM.render(
+             React.createElement('div', {},
+                React.createElement('p', {}, poll.question),
+                //React.createElement('btn', {}, buttons),
+                React.createElement('br'),
+                React.createElement(newChoiceForm)),
+             document.getElementById('vote')
+          );
+        },
+        render: function() {
+            return (
+              React.createElement('button', {
+                className: 'btn btn-delete',
+                onClick: this.form
+              }, "New choice")
+            );
+        }
+      });;
+      var newChoiceElement = null;
+      if (isLoggedIn.state) { newChoiceElement = React.createElement(newChoiceClass); }
+
+      var newChoiceForm = React.createClass({
+        propTypes: {
+          submit: React.PropTypes.func
+        },
+        submit: function() {
+          var num = poll.choices.length;
+          poll.choices[num] = {
+             'id':  num+1,
+             'choice': document.getElementById('newChoice').value,
+             'count': 0
+          };
+          ajaxFunctions.ajaxRequest('POST', updateApi, function(id) {
+             window.location = pollUrl;
+          }, poll);
+        },
+        render: function() {
+          return(
+            React.createElement('form', { className: 'box'},
+              React.createElement('p', {}, 'Enter a new choice and click submit: '),
+              React.createElement('input', {
+                type: 'text',
+                id: 'newChoice'
+              }),
+              React.createElement('input', {
+                className: 'btn btn-submit',
+                type: 'submit',
+                value: 'Submit',
+                onClick: this.submit
+              }))
+          );
+        }
+      });
+
+      //DOM render operations
       ReactDOM.render(
          React.createElement('div', {},
             React.createElement('p', {}, poll.question),
-            React.createElement('btn', {}, buttons)),
+            React.createElement('btn', {}, buttons),
+            //React.createElement('br'),
+            newChoiceElement),
          document.getElementById('vote')
       );
    }
 
-   function renderResult (poll) {
+   function renderResult (result) {
      //confirm that results are not empty.
      var sum = 0;
-     for (var prop in poll) {
-       sum += poll[prop].count;
+     for (var prop in result) {
+       sum += result[prop].count;
      };
 
      if (sum > 0) {
-       chart(poll);
+       chart(result);
        renderResult.state = true;
      } else {
        ReactDOM.render(
@@ -223,7 +297,7 @@
      renderResult.state = false;
    }
 
-   function shareButtons(poll) {
+   function shareButtons() {
      var shareTxt = 'text=' + poll.question;
 
      var tweet = React.createClass({
@@ -231,7 +305,7 @@
          return (
            React.createElement('a', {
              className: 'fa fa-twitter',
-             href: 'https://twitter.com/intent/tweet?' + shareTxt + '&url=' + shareUrl,
+             href: 'https://twitter.com/intent/tweet?' + shareTxt + '&url=' + pollUrl,
              target: '_blank'
            }, ''));
        }
@@ -242,7 +316,7 @@
          return (
            React.createElement('a', {
              className: 'fa fa-facebook',
-             href: 'https://www.facebook.com/sharer/sharer.php?' + shareUrl,
+             href: 'https://www.facebook.com/sharer/sharer.php?' + pollUrl,
              target: '_blank'
            }, ''));
        }
@@ -289,7 +363,7 @@
      d3.select(targetID).selectAll('p').remove();
 
      var w = 360,
-       h = 360,
+       h = 400,
        r = 180;
 
      var color = d3.scaleOrdinal(d3.schemeCategory20b);
@@ -329,7 +403,7 @@
          var text = d.data.choice + ': ' + d.data.count;
          return text;
        });
-}
+     }
 
 
 })();
