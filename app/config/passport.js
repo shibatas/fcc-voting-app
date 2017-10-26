@@ -36,8 +36,6 @@ module.exports = function (passport) {
 					newUser.github.username = profile.username;
 					newUser.github.displayName = profile.displayName;
 					newUser.github.publicRepos = profile._json.public_repos;
-					newUser.nbrClicks.btn1 = 0;
-					newUser.nbrClicks.btn2 = 0;
 
 					newUser.save(function (err) {
 						if (err) {
