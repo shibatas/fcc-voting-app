@@ -77,4 +77,7 @@ module.exports = function (app, passport) {
 
 	app.route('/delete/:id')
 		.get(isLoggedIn, poll.deletePoll);
+
+	app.route('/ip')
+		.get(poll.getIP);
 };

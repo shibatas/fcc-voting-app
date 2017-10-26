@@ -2,6 +2,7 @@
 
 var Users = require('../models/users.js');
 var Questions = require('../models/questions.js');
+var ip = require('ip');
 
 function poll () {
 
@@ -117,6 +118,11 @@ function poll () {
 
 		res.redirect('/');
 	};
+
+	this.getIP = function (req, res) {
+		var clientIP = ip.address();
+		res.send(clientIP);
+	}
 }
 
 module.exports = poll;

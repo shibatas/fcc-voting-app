@@ -55,6 +55,10 @@
 
    isLoggedIn();
 
+   ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', appUrl + '/ip', function(result) {
+     console.log(result);
+   }));
+
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
 
       poll = JSON.parse(result);

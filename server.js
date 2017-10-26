@@ -5,7 +5,7 @@ var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
-var bodyParser = require("body-parser"); //used for posting new polls
+var bodyParser = require('body-parser'); //used for posting new polls
 
 var app = express();
 require('dotenv').load();
