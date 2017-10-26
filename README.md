@@ -27,6 +27,13 @@ This app incorporates the following:
 - [React](https://reactjs.org/) for rendering the pages
 - [D3](https://d3js.org/) for rendering the pie chart
 
+### To Do
+The app checks all the boxes in terms of function, but I would like to improve the following either in this app or in my next project:
+- Use JSX for React code. As first time I wanted to code without JSX. Next time I will use JSX for cleaner code!
+- React *createClass* and *PropTyes* are both deprecated. Tutorials I followed were using outdated code. I will learn the appropriate latest methods next time.
+- React elements do not have proper kep props assigned. Need to fix this.
+- Perhaps add facebook and/or twitter strategies to authentication in case my non-coding friends and family want to vote.
+
 ## License
 
 MIT License. [Click here for more information.](LICENSE.md)
