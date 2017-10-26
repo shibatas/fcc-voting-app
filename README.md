@@ -1,6 +1,8 @@
 # freeCodeCamp Voting App project
 by Shohei Shibata
 
+This is my first-ever attempt at a full-stack web app. All feedbacks are highly welcomed!
+
 ## Objectives
 Per [FCC website](https://www.freecodecamp.org/challenges/build-a-voting-app):
 > Objective: Build a full stack JavaScript app that is functionally similar to this: https://fcc-voting-arthow4n.herokuapp.com/ and deploy it to Heroku.
@@ -18,11 +20,12 @@ Per [FCC website](https://www.freecodecamp.org/challenges/build-a-voting-app):
 
 
 This app incorporates the following:
-- [Clementine.je FCC Boilerplate](https://github.com/johnstonbl01/clementinejs-fcc)
-- [Node.js](https://nodejs.org/)
-- [MongoDB](http://www.mongodb.org/)
+- [Clementine.js FCC Boilerplate](https://github.com/johnstonbl01/clementinejs-fcc)
+- [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
+- [MongoDB](http://www.mongodb.org/) for database
 - [Passport](https://github.com/passport/www.passportjs.org) (GitHub Strategy)
-- [React](https://reactjs.org/)
+- [React](https://reactjs.org/) for rendering the pages
+- [D3](https://d3js.org/) for rendering the pie chart
 
 ## License
 
