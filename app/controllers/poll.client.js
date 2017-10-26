@@ -229,15 +229,20 @@
           cancel: React.PropTypes.func
         },
         submit: function() {
-          var num = poll.choices.length;
-          poll.choices[num] = {
-             'id':  num+1,
-             'choice': document.getElementById('newChoice').value,
-             'count': 0
-          };
-          ajaxFunctions.ajaxRequest('POST', updateApi, function(id) {
-             window.location = pollUrl;
-          }, poll);
+          var newChoice = document.getElementById('newChoice').value;
+          if (newChoice.length < 1) {
+            alert('Please type a new choice first!');
+          } else {
+            var num = poll.choices.length;
+            poll.choices[num] = {
+               'id':  num+1,
+               'choice': newChoice,
+               'count': 0
+            };
+            ajaxFunctions.ajaxRequest('POST', updateApi, function(id) {
+               renderChoices();
+            }, poll);
+          }
         },
         cancel: function() {
           window.location = pollUrl;
@@ -257,10 +262,9 @@
                 onClick: this.submit
               }),
               React.createElement('button', {
-                className: 'btn btn-delete',
-                value: 'Cancel',
+                className: 'btn btn-cancel',
                 onClick: this.cancel
-              }))
+              }, 'Cancel'))
           );
         }
       });

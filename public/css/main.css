@@ -183,6 +183,15 @@ img {
   width: 70px;
   height: 30px;
   line-height: 10px;
+  margin-left: 20px;
+}
+
+.btn-cancel {	/* Styling for cancel button */
+	background-color: #ECEFF1;
+	color: #212121;
+  width: 70px;
+  height: 30px;
+  line-height: 10px;
 }
 
 #click-nbr {
