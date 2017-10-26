@@ -29,6 +29,7 @@
     "express": "^4.16.1",
     "express-session": "^1.15.6",
     "ext-ip": "^0.3.8",
+    "favicon": "0.0.2",
     "mongoose": "^4.12.0",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
