@@ -66,7 +66,7 @@
           React.createElement('div', {},
              React.createElement('p', {}, 'Which question do you want to answer?'),
              React.createElement('div', {}, questions)),
-          document.getElementById('questions'));
+          document.getElementById('poll'));
        renderPolls.state = true;
      });
    }
@@ -74,6 +74,8 @@
    var actions = function() {
      ReactDOM.render(
         React.createElement('div', {className: 'btn-container'},
+           React.createElement('hr'),
+           React.createElement('br'),
            React.createElement('p', {}, 'Authenticated User Options:'),
            React.createElement('button', {
                  type: 'submit',
@@ -104,6 +106,9 @@
 
               ReactDOM.render(
                 React.createElement('div', {className: 'btn-container'},
+                   React.createElement('hr'),
+                   React.createElement('br'),
+                   React.createElement('p', {}, 'Authenticated User Options:'),
                    React.createElement('button', {
                          type: 'submit',
                          className: 'btn btn-delete',

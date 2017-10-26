@@ -3,6 +3,8 @@
 var path = process.cwd();
 //var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 var Poll = require(path + '/app/controllers/poll.server.js');
+var React = require('react');
+var ReactDOM = require('react-dom');
 
 module.exports = function (app, passport) {
 

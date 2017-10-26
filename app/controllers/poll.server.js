@@ -2,27 +2,58 @@
 
 var Users = require('../models/users.js');
 var Questions = require('../models/questions.js');
-var ip = require('ip');
+var ip = require('ext-ip')();
 
 function poll () {
 
 	this.addClick = function (req, res) {
 		var id = req.params['id'];
 		var choiceNum = req.params['choice'];
-		//console.log(id);
-		//console.log(choiceNum);
+		var name; //username or ip address of client
 
-		Questions
-			.findOneAndUpdate({
-				_id: id,
-				'choices.id': choiceNum},
-				{
-					$inc: {'choices.$.count': 1}
-				})
-			.exec(function (err, data) {
-				if (err) {throw err;}
-				res.json(data);
+		//vote with username if logged in
+		if (req.isAuthenticated()) {
+			lookFor(req.user.github.username);
+		} else { //vote with ipAddress, if not logged in
+			ip.get().then(function(ipAddress) {
+				lookFor(ipAddress);
+			}, function(err) {
+				console.error(err);
 			});
+		}
+
+		function lookFor(name) {
+			Questions
+				.find({
+					_id: id,
+					voters: name
+				})
+				.exec(function(err, data) {
+					console.log(data.length);
+					if (data.length === 0) {
+						vote(name);
+					} else {
+						res.send('already voted');
+					}
+				})
+		}
+
+		function vote(name) {
+			console.log(name);
+			Questions
+				.findOneAndUpdate({
+					_id: id,
+					'choices.id': choiceNum},
+					{
+						$inc: {'choices.$.count': 1},
+						$push: {'voters': name}
+					})
+				.exec(function (err, data) {
+					if (err) {throw err;}
+					res.send('vote saved');
+				});
+		}
+
 	};
 
 	this.resetClicks = function (req, res) {
@@ -39,10 +70,17 @@ function poll () {
 
 				for (var i = 0; i < num; i++) {
 					Questions.update(query, newData,
+						function(err, data) {
+							if (err) {throw err;}
+						}
+					);
+				}
+
+				Questions.update({_id: id},{voters: []},
 					function(err, data) {
 						if (err) {throw err;}
-					});
-				}
+					}
+				);
 
 				res.send('reset');
 			});
@@ -120,8 +158,11 @@ function poll () {
 	};
 
 	this.getIP = function (req, res) {
-		var clientIP = ip.address();
-		res.send(clientIP);
+		ip.get().then(function(data) {
+			res.send(data);
+		}, function(err) {
+			console.error(err);
+		});
 	}
 }
 

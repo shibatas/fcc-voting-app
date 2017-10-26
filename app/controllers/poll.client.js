@@ -55,10 +55,6 @@
 
    isLoggedIn();
 
-   ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', appUrl + '/ip', function(result) {
-     console.log(result);
-   }));
-
    ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
 
       poll = JSON.parse(result);
@@ -76,8 +72,6 @@
    }));
 
    function updateClickCount () {
-      console.log('update click count');
-
       ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', dataUrl, function(result) {
          var data = JSON.parse(result);
          renderResult(data.choices);
@@ -154,6 +148,8 @@
      ReactDOM.render(
         React.createElement('div', {},
            React.createElement('div', {className: 'btn-container'},
+              React.createElement('hr'),
+              React.createElement('br'),
               React.createElement('p', {}, 'As the creator of this poll you can also do the following:'),
               React.createElement(editClass),
               React.createElement(resetClass),
@@ -178,8 +174,10 @@
             //console.log(this.props.id);
             ajaxFunctions.ready(ajaxFunctions.ajaxRequest(
               'GET', voteUrl+"/"+this.props.id, function(result) {
-                console.log(JSON.stringify(result));
-                  updateClickCount();
+                if (result === "already voted") {
+                  alert('This user/IP address has already voted.');
+                }
+                updateClickCount();
             }));
 
 
@@ -206,11 +204,11 @@
         form: function() {
           ReactDOM.render(
              React.createElement('div', {},
-                React.createElement('p', {}, poll.question),
+                React.createElement('h3', {}, poll.question),
                 //React.createElement('btn', {}, buttons),
                 React.createElement('br'),
                 React.createElement(newChoiceForm)),
-             document.getElementById('vote')
+             document.getElementById('poll')
           );
         },
         render: function() {
@@ -227,7 +225,8 @@
 
       var newChoiceForm = React.createClass({
         propTypes: {
-          submit: React.PropTypes.func
+          submit: React.PropTypes.func,
+          cancel: React.PropTypes.func
         },
         submit: function() {
           var num = poll.choices.length;
@@ -239,6 +238,9 @@
           ajaxFunctions.ajaxRequest('POST', updateApi, function(id) {
              window.location = pollUrl;
           }, poll);
+        },
+        cancel: function() {
+          window.location = pollUrl;
         },
         render: function() {
           return(
@@ -261,11 +263,11 @@
       //DOM render operations
       ReactDOM.render(
          React.createElement('div', {},
-            React.createElement('p', {}, poll.question),
+            React.createElement('h3', {}, poll.question),
             React.createElement('btn', {}, buttons),
             //React.createElement('br'),
             newChoiceElement),
-         document.getElementById('vote')
+         document.getElementById('poll')
       );
    }
 

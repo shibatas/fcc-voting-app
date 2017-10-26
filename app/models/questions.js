@@ -13,7 +13,8 @@ var Question = new Schema({
 	id: Number,
 	username: String,
 	question: String,
-	choices: [Choices]
+	choices: [Choices],
+	voters: [String]
 }, {
   toObject: {
   virtuals: true

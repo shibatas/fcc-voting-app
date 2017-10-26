@@ -30,8 +30,17 @@ header {
 	text-align: center;
 }
 
+footer {
+  margin-top: 50px;
+  font-size: 10px;
+}
+
 p {
 	margin: 8px 0 0 0;
+}
+
+hr {
+  width: 80%;
 }
 
 .container p {
@@ -46,6 +55,14 @@ p {
   width: 50%;
   padding: 10px;
   border-radius: 5px;
+}
+
+#poll {
+  margin-top: 30px;
+}
+
+#actions {
+  margin-top: 0px;
 }
 
 /****** Header Styling ******/
@@ -110,7 +127,7 @@ header a ~ p {
 
 img {
 	margin: 0 auto;
-	display: block;
+	display: inline-block;
 }
 
 .clementine-text { /* Styling for the Clementine.js text */
