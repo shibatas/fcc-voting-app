@@ -255,6 +255,11 @@
                 type: 'submit',
                 value: 'Submit',
                 onClick: this.submit
+              }),
+              React.createElement('button', {
+                className: 'btn btn-delete',
+                value: 'Cancel',
+                onClick: this.cancel
               }))
           );
         }
